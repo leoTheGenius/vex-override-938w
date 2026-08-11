@@ -14,4 +14,4 @@ This repository contains the work behind our robot (s), including code, CAD, des
 - Engineering documentation
 - Tools and utilities used by the team
 
-Our CAD and code are developed alongside the physical robot, allowing us to test ideas, iterate on designs, and keep a record of how the robot evolves throughout the season.
+Our CAD and code are developed alongside the physical robot, allowing us to test ideas, reiterate on old designs, and keep a record of how the robot evolves throughout the season.
