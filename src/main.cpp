@@ -6,21 +6,19 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::MotorGroup leftdrive({1, -2}, pros::MotorGearset::green);
 pros::MotorGroup rightdrive({-3, 4}, pros::MotorGearset::green);
 pros::Imu imu(5);
-pros::Motor intake({8}, pros::MotorGearset::green);
-pros::MotorGroup cascade({9, -10}, pros::MotorGearset::green);
-pros::Motor clawrotate({11}, pros::MotorGearset::green);
-pros::Motor claw({12}, pros::MotorGearset::green);
+// pros::Motor intake(8, pros::MotorGearset::green);
+pros::MotorGroup dr4b({-6, 7}, pros::MotorGearset::green);
+pros::Motor clawrotate(8, pros::MotorGearset::green);
+pros::Motor clawspin(-9, pros::MotorGearset::green);
 lemlib::Drivetrain drivetrain(&leftdrive, &rightdrive, 12, lemlib::Omniwheel::NEW_325, 360, 2.0);
-pros::Rotation horizontalencoder(6);
-pros::Rotation verticalencoder(7);
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontalencoder, lemlib::Omniwheel::NEW_2, -5.75);
-lemlib::TrackingWheel vertical_tracking_wheel(&verticalencoder, lemlib::Omniwheel::NEW_2, -2.5);
-lemlib::OdomSensors sensors(&vertical_tracking_wheel,
+lemlib::TrackingWheel left_tracking_wheel(&leftdrive, lemlib::Omniwheel::NEW_325, -6, 360);
+lemlib::TrackingWheel right_tracking_wheel(&rightdrive, lemlib::Omniwheel::NEW_325, 6, 360);
+lemlib::OdomSensors sensors(&left_tracking_wheel,
+                            &right_tracking_wheel,
                             nullptr,
-                            &horizontal_tracking_wheel,
                             nullptr,
-                            &imu
-);
+                            &imu);
+
 lemlib::ControllerSettings angularcontroller(2, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               10, // derivative gain (kD)
@@ -44,7 +42,7 @@ lemlib::ControllerSettings lateralcontroller(10, // proportional gain (kP)
 
 lemlib::Chassis chassis(drivetrain, lateralcontroller, angularcontroller, sensors);
 void initialize() {
-	rightdrive.set_reversed(true);
+    dr4b.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 	pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
     // print position to brain screen
@@ -69,6 +67,7 @@ void autonomous() {
 
 void opcontrol() {
     bool intakeon = false;
+    master.rumble(".  - .-.-- -");
 	while (true) {
 		int forward = master.get_analog(ANALOG_LEFT_Y);
 		int turn = master.get_analog(ANALOG_RIGHT_X);
@@ -76,29 +75,30 @@ void opcontrol() {
             intakeon = !intakeon;
         }
         if (intakeon) {
-            intake.move_velocity(200);
+            clawspin.move_velocity(200);
         } else {
-            intake.move_velocity(0);
+            clawspin.move_velocity(0);
         }
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-            cascade.move_velocity(200);
+            dr4b.move_velocity(-150);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-            cascade.move_velocity(-200);
+            dr4b.move_velocity(150);
         } else {
-            cascade.move_velocity(0);
+            dr4b.move_velocity(0);
         }
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            claw.move_velocity(200);
+            clawrotate.move_velocity(100);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            claw.move_velocity(-200);
+            clawrotate.move_velocity(-100);
         } else {
-            claw.move_velocity(0);
+            clawrotate.move_velocity(0);
         }
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
             clawrotate.move_velocity(200);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
             clawrotate.move_velocity(-200);} else {
             clawrotate.move_velocity(0);}
+        
 		chassis.arcade(forward, turn);
 		pros::delay(20);
 	}
