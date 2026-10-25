@@ -3,13 +3,13 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/imu.hpp"
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::MotorGroup leftdrive({1, -2}, pros::MotorGearset::green);
-pros::MotorGroup rightdrive({-3, 4}, pros::MotorGearset::green);
-pros::Imu imu(5);
+pros::MotorGroup leftdrive({12, -11}, pros::MotorGearset::green);
+pros::MotorGroup rightdrive({-16, 15}, pros::MotorGearset::green);
+pros::Imu imu(14);
 // pros::Motor intake(8, pros::MotorGearset::green);
-pros::MotorGroup dr4b({-6, 7}, pros::MotorGearset::green);
-pros::Motor clawrotate(8, pros::MotorGearset::green);
-pros::Motor clawspin(-9, pros::MotorGearset::green);
+pros::MotorGroup dr4b({-18, 19}, pros::MotorGearset::green);
+pros::Motor clawrotate(21, pros::MotorGearset::green);
+pros::Motor clawspin(-20, pros::MotorGearset::green);
 lemlib::Drivetrain drivetrain(&leftdrive, &rightdrive, 12, lemlib::Omniwheel::NEW_325, 360, 2.0);
 lemlib::TrackingWheel left_tracking_wheel(&leftdrive, lemlib::Omniwheel::NEW_325, -6, 360);
 lemlib::TrackingWheel right_tracking_wheel(&rightdrive, lemlib::Omniwheel::NEW_325, 6, 360);
