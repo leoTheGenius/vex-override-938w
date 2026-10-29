@@ -8,8 +8,8 @@ pros::MotorGroup rightdrive({-16, 15}, pros::MotorGearset::green);
 pros::Imu imu(14);
 // pros::Motor intake(8, pros::MotorGearset::green);
 pros::MotorGroup dr4b({-18, 19}, pros::MotorGearset::green);
-pros::Motor clawrotate(21, pros::MotorGearset::green);
-pros::Motor clawspin(-20, pros::MotorGearset::green);
+pros::Motor clawrotate(20, pros::MotorGearset::green);
+pros::Motor clawspin(-21, pros::MotorGearset::green);
 lemlib::Drivetrain drivetrain(&leftdrive, &rightdrive, 12, lemlib::Omniwheel::NEW_325, 360, 2.0);
 lemlib::TrackingWheel left_tracking_wheel(&leftdrive, lemlib::Omniwheel::NEW_325, -6, 360);
 lemlib::TrackingWheel right_tracking_wheel(&rightdrive, lemlib::Omniwheel::NEW_325, 6, 360);
@@ -67,7 +67,10 @@ void autonomous() {
 
 void opcontrol() {
     bool intakeon = false;
+    bool intake67 = false;
     master.rumble(".  - .-.-- -");
+
+
 	while (true) {
 		int forward = master.get_analog(ANALOG_LEFT_Y);
 		int turn = master.get_analog(ANALOG_RIGHT_X);
@@ -75,10 +78,24 @@ void opcontrol() {
             intakeon = !intakeon;
         }
         if (intakeon) {
-            clawspin.move_velocity(200);
+            clawspin.move_velocity(100);
+            intake67 = false;
         } else {
             clawspin.move_velocity(0);
+            intake67 = false;
         }
+
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+            intake67 = !intake67;
+        }
+        if (intake67) {
+            clawspin.move_velocity(30);
+            intakeon = false;
+        } else {
+            clawspin.move_velocity(0);
+            intakeon = false;
+        }
+
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             dr4b.move_velocity(-150);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
@@ -86,20 +103,27 @@ void opcontrol() {
         } else {
             dr4b.move_velocity(0);
         }
+
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            clawrotate.move_velocity(100);
+            clawrotate.move_velocity(50);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            clawrotate.move_velocity(-100);
+            clawrotate.move_velocity(-50);
         } else {
             clawrotate.move_velocity(0);
         }
+        
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
             clawrotate.move_velocity(200);
         } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-            clawrotate.move_velocity(-200);} else {
+            clawrotate.move_velocity(-200);
+        } else {
             clawrotate.move_velocity(0);}
         
+
+
 		chassis.arcade(forward, turn);
+
+        //delay
 		pros::delay(20);
 	}
 }
