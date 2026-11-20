@@ -34,14 +34,14 @@ inline lemlib::Drivetrain drivetrain(
 inline lemlib::TrackingWheel vertical_tracking_wheel(
     &vertencoder,                 // vertical rotation sensor
     lemlib::Omniwheel::NEW_2,     // using new 2" omnis
-    -6,                           // -6" offset from tracking center
+    -0.75,                           // -0.75" offset from tracking center
     1                             // 1:1 gear ratio
 );
 
 inline lemlib::TrackingWheel horizontal_tracking_wheel(
     &horizencoder,                // horizontal rotation sensor
     lemlib::Omniwheel::NEW_2,     // using new 2" omnis
-    6,                            // 6" offset from tracking center
+    -2.1,                            // -2.1" offset from tracking center
     1                             // 1:1 gear ratio
 );
 

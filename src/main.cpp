@@ -3,53 +3,19 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "pros/imu.hpp"
 #include "chassis.h"
-// pros::Controller master(pros::E_CONTROLLER_MASTER);
-// pros::MotorGroup leftdrive({-7, -10, -6}, pros::MotorGearset::green);
-// pros::MotorGroup rightdrive({-2, -9, -5}, pros::MotorGearset::green);
-// pros::Imu imu(14);
-// pros::Rotation vertencoder(12);
-// pros::Rotation horizencoder(11);
-// // // pros::Motor intake(8, pros::MotorGearset::green);
-// // pros::MotorGroup dr4b({-18, 9}, pros::MotorGearset::green);
-// // pros::Motor clawrotate(20, pros::MotorGearset::green);
-// // pros::Motor clawspin(-21, pros::MotorGearset::green);
-// lemlib::Drivetrain drivetrain(&leftdrive, &rightdrive, 12, lemlib::Omniwheel::NEW_325, 450, 2.0);
-// lemlib::TrackingWheel vertical_tracking_wheel(&vertencoder, lemlib::Omniwheel::NEW_2, -6, 1);
-// lemlib::TrackingWheel horizontal_tracking_wheel(&horizencoder, lemlib::Omniwheel::NEW_2, 6, 1);
-// lemlib::OdomSensors sensors(&vertical_tracking_wheel,
-//                             nullptr,
-//                             &horizontal_tracking_wheel,
-//                             nullptr,
-//                             &imu);
+#include "autons.h"
 
-// lemlib::ControllerSettings angularcontroller(2, // proportional gain (kP)
-//                                               0, // integral gain (kI)
-//                                               10, // derivative gain (kD)
-//                                               3, // anti windup
-//                                               1, // small error range, in degrees
-//                                               100, // small error range timeout, in milliseconds
-//                                               3, // large error range, in degrees
-//                                               500, // large error range timeout, in milliseconds
-//                                               0 // maximum acceleration (slew)
-// );
-// lemlib::ControllerSettings lateralcontroller(10, // proportional gain (kP)
-//                                               0, // integral gain (kI)
-//                                               3, // derivative gain (kD)
-//                                               3, // anti windup
-//                                               1, // small error range, in inches
-//                                               100, // small error range timeout, in milliseconds
-//                                               3, // large error range, in inches
-//                                               500, // large error range timeout, in milliseconds
-//                                               20 // maximum acceleration (slew)
-// );
-
-// lemlib::Chassis chassis(drivetrain, lateralcontroller, angularcontroller, sensors);
 int auton = 0;
+void on_center_button() {
+    auton ++;
+    auton %= 4;
+}
 void initialize() {
     // dr4b.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     // clawrotate.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 	pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
+    pros::lcd::register_btn1_cb(on_center_button);
     // print position to brain screen
     pros::Task screen_task([&]() {
         while (true) {
@@ -68,8 +34,14 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-    if (auton == 1) {
-
+    if (auton == 0) {
+        Right();
+    } else if (auton == 1) {
+        Left();
+    } else if (auton == 2) {
+        AWP();
+    } else if (auton == 3) {
+        Skills();
     }
 }
 
